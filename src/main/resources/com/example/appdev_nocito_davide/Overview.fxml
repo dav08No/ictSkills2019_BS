@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.Tab?>
+<?import javafx.scene.control.TabPane?>
+<?import javafx.scene.image.Image?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.VBox?>
+
+<BorderPane xmlns="http://javafx.com/javafx/22"
+            xmlns:fx="http://javafx.com/fxml/1"
+            fx:controller="com.example.appdev_nocito_davide.OverviewController">
+
+    <!-- Header Bild -->
+    <top>
+        <ImageView fitHeight="62.0"
+                   pickOnBounds="true"
+                   preserveRatio="true"
+                   BorderPane.alignment="TOP_LEFT">
+            <image>
+                <Image url="@header.png" />
+            </image>
+        </ImageView>
+    </top>
+
+    <!-- Inhalt mitte -->
+    <center>
+        <VBox spacing="12.0" BorderPane.alignment="CENTER">
+            <padding>
+                <Insets top="16.0" left="16.0" right="16.0" bottom="16.0" />
+            </padding>
+
+            <!-- Titel und Game -->
+            <VBox spacing="4.0">
+                <Label fx:id="tournamentTitleLabel"
+                       style="-fx-font-size: 24px; -fx-font-weight: bold;"
+                       text="Tournament Title" />
+
+                <HBox spacing="8.0">
+                    <Label text="Game:" />
+                    <Label fx:id="gameNameLabel" text="Game Name" />
+                    <HBox spacing="8.0" alignment="CENTER_RIGHT" HBox.hgrow="ALWAYS">
+                        <Button fx:id="exportButton"
+                                text="Export Data"
+                                onAction="#onExportData" />
+                    </HBox>
+                </HBox>
+            </VBox>
+
+            <!-- Tabs -->
+            <TabPane fx:id="tabPane"
+                     tabClosingPolicy="UNAVAILABLE"
+                     VBox.vgrow="ALWAYS">
+
+                <tabs>
+                    <Tab text="Participants">
+                        <content>
+                            <AnchorPane>
+                                <!-- hier spaeter TableView oder Liste fuer Participants -->
+                                <Label text="Participants content"
+                                       AnchorPane.topAnchor="10.0"
+                                       AnchorPane.leftAnchor="10.0" />
+                            </AnchorPane>
+                        </content>
+                    </Tab>
+
+                    <Tab text="Matches">
+                        <content>
+                            <AnchorPane>
+                                <!-- hier spaeter Matches Inhalt -->
+                                <Label text="Matches content"
+                                       AnchorPane.topAnchor="10.0"
+                                       AnchorPane.leftAnchor="10.0" />
+                            </AnchorPane>
+                        </content>
+                    </Tab>
+                </tabs>
+            </TabPane>
+        </VBox>
+    </center>
+</BorderPane>
