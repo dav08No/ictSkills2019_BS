@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<?import javafx.scene.text.Font?>
+<BorderPane xmlns="http://javafx.com/javafx/25"
+            xmlns:fx="http://javafx.com/fxml/1"
+            fx:controller="com.example.appdev_nocito_davide.ParticipantDialogController">
+    <center>
+        <VBox spacing="10.0">
+            <padding>
+                <Insets top="12.0" right="12.0" bottom="12.0" left="12.0"/>
+            </padding>
+            <GridPane hgap="10.0" vgap="10.0">
+                <columnConstraints>
+                    <ColumnConstraints minWidth="80.0" halignment="LEFT"/>
+                    <ColumnConstraints hgrow="ALWAYS"/>
+                </columnConstraints>
+
+                <rowConstraints>
+                    <RowConstraints vgrow="NEVER"/>
+                    <RowConstraints vgrow="NEVER"/>
+                    <RowConstraints vgrow="NEVER"/>
+                </rowConstraints>
+
+                <children>
+                    <Label text="Name" GridPane.rowIndex="0" GridPane.columnIndex="0"/>
+                    <TextField fx:id="nameField" GridPane.rowIndex="0" GridPane.columnIndex="1"/>
+                    <Label text="Type" GridPane.rowIndex="1" GridPane.columnIndex="0"/>
+                    <HBox spacing="10.0" GridPane.rowIndex="1" GridPane.columnIndex="1">
+                        <children>
+                            <RadioButton fx:id="playerRadio" text="Player" toggleGroup="$typeGroup"/>
+                            <RadioButton fx:id="teamRadio" text="Team" toggleGroup="$typeGroup"/>
+                        </children>
+                    </HBox>
+                    <CheckBox fx:id="temporaryCheck" text="Temporary"
+                              GridPane.rowIndex="2" GridPane.columnIndex="1"/>
+                </children>
+            </GridPane>
+            <Label fx:id="errorLabel" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="17.0" textFill="RED" VBox.vgrow="ALWAYS">
+                <font>
+                    <Font name="System Bold" size="12.0" />
+                </font>
+            </Label>
+        </VBox>
+    </center>
+    <bottom>
+        <HBox spacing="8.0" alignment="CENTER_RIGHT" BorderPane.alignment="CENTER">
+            <padding>
+                <Insets top="8.0" right="12.0" bottom="8.0" left="12.0"/>
+            </padding>
+            <children>
+                <Button fx:id="cancelButton" text="Cancel" onAction="#onCancel"/>
+                <Button fx:id="saveButton" text="Save" onAction="#onSave" defaultButton="true"/>
+            </children>
+        </HBox>
+    </bottom>
+</BorderPane>

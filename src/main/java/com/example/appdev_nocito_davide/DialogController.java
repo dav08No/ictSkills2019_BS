@@ -7,6 +7,8 @@ import javafx.scene.control.*;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.VBox;
 
+import java.lang.reflect.Array;
+import java.util.ArrayList;
 import java.util.List;
 
 public class DialogController implements iReceiveData {
@@ -35,7 +37,7 @@ public class DialogController implements iReceiveData {
     @FXML
     private TextField titleField;
 
-    private List<Game> allGames;
+    private ArrayList<Game> allGames;
 
     @FXML
     void onSaveTournament(ActionEvent event) {

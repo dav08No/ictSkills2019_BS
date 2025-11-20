@@ -1,0 +1,145 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.image.Image?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.*?>
+
+<BorderPane xmlns="http://javafx.com/javafx/25"
+            xmlns:fx="http://javafx.com/fxml/1"
+            fx:controller="com.example.appdev_nocito_davide.TournamentOverviewController">
+
+    <top>
+        <ImageView fitHeight="62.0"
+                   pickOnBounds="true"
+                   preserveRatio="true"
+                   BorderPane.alignment="TOP_LEFT">
+            <image>
+                <Image url="@header.png"/>
+            </image>
+        </ImageView>
+    </top>
+
+    <center>
+        <VBox spacing="12.0" BorderPane.alignment="CENTER">
+            <padding>
+                <Insets top="16.0" right="16.0" bottom="16.0" left="16.0"/>
+            </padding>
+
+            <VBox spacing="4.0">
+                <Label fx:id="tournamentTitleLabel"
+                       style="-fx-font-size: 24px; -fx-font-weight: bold;"
+                       text="Tournament Title"/>
+
+                <HBox spacing="8.0">
+                    <Label text="Game:"/>
+                    <Label fx:id="gameNameLabel" text="Game Name"/>
+
+                    <HBox alignment="CENTER_RIGHT" spacing="8.0" HBox.hgrow="ALWAYS">
+                        <Button fx:id="exportButton"
+                                onAction="#onExportData"
+                                text="Export Data"/>
+                    </HBox>
+                </HBox>
+            </VBox>
+
+            <TabPane fx:id="tabPane"
+                     tabClosingPolicy="UNAVAILABLE"
+                     VBox.vgrow="ALWAYS">
+
+                <tabs>
+                    <Tab fx:id="Participants" text="Participants">
+                        <content>
+                            <BorderPane>
+                                <padding>
+                                    <Insets top="8.0" right="8.0" bottom="8.0" left="8.0"/>
+                                </padding>
+                                <top>
+                                    <VBox spacing="4.0" BorderPane.alignment="CENTER">
+                                        <Label fx:id="underTitleLabel"
+                                               text='Participants of "Super Gaming Cup 2019"'
+                                               style="-fx-font-size: 16px; -fx-font-weight: bold;"/>
+                                        <GridPane hgap="0" vgap="4.0">
+                                            <columnConstraints>
+                                                <ColumnConstraints hgrow="ALWAYS" halignment="CENTER"/>
+                                                <ColumnConstraints hgrow="ALWAYS" halignment="CENTER"/>
+                                            </columnConstraints>
+                                            <rowConstraints>
+                                                <RowConstraints vgrow="NEVER"/>
+                                                <RowConstraints vgrow="NEVER"/>
+                                            </rowConstraints>
+                                            <Label fx:id="participantsCount"
+                                                   style="-fx-font-size: 24px; -fx-font-weight: bold;"
+                                                   GridPane.rowIndex="0" GridPane.columnIndex="0"
+                                                   text="0"/>
+                                            <Label text="Participants"
+                                                   GridPane.rowIndex="1" GridPane.columnIndex="0"/>
+                                            <Label fx:id="tournamentSize"
+                                                   style="-fx-font-size: 24px; -fx-font-weight: bold;"
+                                                   GridPane.rowIndex="0" GridPane.columnIndex="1"
+                                                   text="0"/>
+                                            <Label text="Tournament Size"
+                                                   GridPane.rowIndex="1" GridPane.columnIndex="1"/>
+                                        </GridPane>
+                                        <Separator/>
+                                    </VBox>
+                                </top>
+                                <center>
+                                    <TableView fx:id="participantsList" BorderPane.alignment="CENTER">
+                                        <columnResizePolicy>
+                                            <TableView fx:constant="CONSTRAINED_RESIZE_POLICY" />
+                                        </columnResizePolicy>
+
+                                        <columns>
+                                            <TableColumn fx:id="participantNameColumn"
+                                                         text="Name" />
+                                        </columns>
+                                    </TableView>
+                                </center>
+                                <bottom>
+                                    <HBox spacing="8.0" BorderPane.alignment="CENTER">
+                                        <padding>
+                                            <Insets top="8.0" right="8.0" bottom="8.0" left="8.0"/>
+                                        </padding>
+
+                                        <Button fx:id="addParticipant"
+                                                mnemonicParsing="false"
+                                                onAction="#onAddParticipant"
+                                                text="+ Participant"/>
+                                        <Button fx:id="FillRandomButton"
+                                                mnemonicParsing="false"
+                                                onAction="#onFillRandom"
+                                                text="Fill Random"/>
+
+                                        <Region HBox.hgrow="ALWAYS"/>
+
+                                        <Button fx:id="EditButton"
+                                                mnemonicParsing="false"
+                                                onAction="#onEdit"
+                                                text="Edit"/>
+                                        <Button fx:id="RemoveButton"
+                                                mnemonicParsing="false"
+                                                onAction="#onRemove"
+                                                text="Remove"/>
+                                    </HBox>
+                                </bottom>
+                            </BorderPane>
+                        </content>
+                    </Tab>
+                    <Tab fx:id="Matches" text="Matches">
+                        <content>
+                            <BorderPane>
+                                <center>
+                                    <Label text="Matches content"
+                                           BorderPane.alignment="CENTER"/>
+                                </center>
+                            </BorderPane>
+                        </content>
+                    </Tab>
+
+                </tabs>
+            </TabPane>
+        </VBox>
+    </center>
+</BorderPane>

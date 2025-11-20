@@ -8,6 +8,8 @@ import javafx.scene.control.Button;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.cell.PropertyValueFactory;
+
+import java.util.ArrayList;
 import java.util.List;
 
 public class TournamentListController {
@@ -34,7 +36,7 @@ public class TournamentListController {
     @FXML
     void onAddTournament() {
         try {
-            App.OpenDialog("Dialog", "Create Tournament", 600, 300, null);
+            App.OpenDialog("Dialog", "Create Tournament", 500, 400, null);
 
             tournamentList.setAll(db.getTournaments());
 
@@ -43,8 +45,22 @@ public class TournamentListController {
         }
     }
 
-    private static List<Game> allGames = db.getGames();
-    private static List<Participant> allParticipants = db.getParticipants();
+    @FXML
+    void onViewTournament() {
+        Tournament selected = tournamentTable.getSelectionModel().getSelectedItem();
+        if (selected == null) {
+            return;
+        }
+
+        try {
+            App.OpenDialog("TournamentOverview", "Tournament Overview", 800, 600, selected);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    private static ArrayList<Game> allGames = db.getGames();
+    private static ArrayList<Participant> allParticipants = db.getParticipants();
 
     public void initialize() {
         setupTournamentTable();
@@ -86,11 +102,7 @@ public class TournamentListController {
             return new ReadOnlyStringWrapper(name);
         });
 
-
-
-
         tournamentList = FXCollections.observableArrayList(db.getTournaments());
-        System.out.println(tournamentList.size());
         tournamentTable.setItems(tournamentList);
     }
 }

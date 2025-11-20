@@ -2,7 +2,6 @@ package com.example.appdev_nocito_davide;
 
 import java.sql.*;
 import java.util.ArrayList;
-import java.util.List;
 
 public class db {
 
@@ -128,14 +127,12 @@ public class db {
         }
     }
 
-    public static List<Participant> getParticipants() {
-        List<Participant> list = new ArrayList<>();
+    public static ArrayList<Participant> getParticipants() {
+        ArrayList<Participant> list = new ArrayList<>();
 
-        String sql = "SELECT ID, Name, IsTemporary, IsTeam FROM participant";
+        String sql = "SELECT * FROM participant";
 
-        try (Connection con = connect();
-             PreparedStatement ps = con.prepareStatement(sql);
-             ResultSet rs = ps.executeQuery()) {
+        try (PreparedStatement ps = connect().prepareStatement(sql); ResultSet rs = ps.executeQuery()) {
 
             while (rs.next()) {
                 int id = rs.getInt("ID");
@@ -151,5 +148,115 @@ public class db {
         }
 
         return list;
+    }
+
+    public static ArrayList<Participant> getParticipantsForTournament(int tournamentID) {
+        ArrayList<Participant> list = new ArrayList<>();
+
+        String sql = "SELECT p.ID, p.Name, p.IsTemporary, p.IsTeam " + "FROM participantintournament tp " +          // NAME ANPASSEN FALLS NOETIG
+                "JOIN participant p ON p.ID = tp.ParticipantID " + "WHERE tp.TournamentID = ?";
+
+        try (Connection con = connect(); PreparedStatement ps = con.prepareStatement(sql)) {
+
+            ps.setInt(1, tournamentID);
+
+            try (ResultSet rs = ps.executeQuery()) {
+                while (rs.next()) {
+                    int id = rs.getInt("ID");
+                    String name = rs.getString("Name");
+                    boolean isTemporary = rs.getBoolean("IsTemporary");
+                    boolean isTeam = rs.getBoolean("IsTeam");
+
+                    list.add(new Participant(id, name, isTemporary, isTeam));
+                }
+            }
+
+        } catch (SQLException | ClassNotFoundException e) {
+            e.printStackTrace();
+        }
+
+        return list;
+    }
+
+    public static Integer addParticipant(Participant p) {
+        String sql = "INSERT INTO participant (Name, IsTemporary, IsTeam) VALUES (?, ?, ?)";
+
+        try (PreparedStatement ps = connect().prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
+
+            ps.setString(1, p.getName());
+            ps.setBoolean(2, p.isTemporary());
+            ps.setBoolean(3, p.isTeam());
+
+            ps.executeUpdate();
+
+            ResultSet rs = ps.getGeneratedKeys();
+            if (rs.next()) {
+                return rs.getInt(1);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+
+    public static void addParticipantToTournament(int tournamentID, int participantID) {
+        String sql = "INSERT INTO participantintournament (TournamentID, ParticipantID) VALUES (?, ?)";
+
+        try (PreparedStatement ps = connect().prepareStatement(sql)) {
+
+            ps.setInt(1, tournamentID);
+            ps.setInt(2, participantID);
+
+            ps.executeUpdate();
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    public static void updateParticipant(Participant p) {
+        String sql = "UPDATE participant SET Name = ?, IsTemporary = ?, IsTeam = ? WHERE ID = ?";
+
+        try (PreparedStatement ps = connect().prepareStatement(sql)) {
+
+            ps.setString(1, p.getName());
+            ps.setBoolean(2, p.isTemporary());
+            ps.setBoolean(3, p.isTeam());
+            ps.setInt(4, p.getID());
+
+            ps.executeUpdate();
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    public static void removeParticipantFromTournament(int tournamentID, int participantID) {
+        String sql = "DELETE FROM participantintournament WHERE TournamentID = ? AND ParticipantID = ?";
+
+        try (PreparedStatement ps = connect().prepareStatement(sql)) {
+
+            ps.setInt(1, tournamentID);
+            ps.setInt(2, participantID);
+
+            ps.executeUpdate();
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    public static void deleteParticipant(int participantID) {
+        String sql = "DELETE FROM participant WHERE ID = ?";
+
+        try (PreparedStatement ps = connect().prepareStatement(sql)) {
+
+            ps.setInt(1, participantID);
+
+            ps.executeUpdate();
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 }
