@@ -129,10 +129,27 @@
                     </Tab>
                     <Tab fx:id="Matches" text="Matches">
                         <content>
-                            <BorderPane>
+                            <BorderPane fx:id="matchesRoot">
+                                <padding>
+                                    <Insets top="8.0" right="8.0" bottom="8.0" left="8.0"/>
+                                </padding>
                                 <center>
-                                    <Label text="Matches content"
-                                           BorderPane.alignment="CENTER"/>
+                                    <StackPane>
+                                        <Button fx:id="startTournamentButton"
+                                                text="Start Tournament"
+                                                onAction="#onStartTournament"
+                                                maxWidth="300"
+                                                maxHeight="80"
+                                                StackPane.alignment="CENTER"/>
+
+                                        <TabPane fx:id="stagesTabPane"
+                                                 tabClosingPolicy="UNAVAILABLE"
+                                                 visible="false"
+                                                 managed="false"
+                                                 prefHeight="200.0"
+                                                 prefWidth="400.0"
+                                                 StackPane.alignment="CENTER"/>
+                                    </StackPane>
                                 </center>
                             </BorderPane>
                         </content>

@@ -54,17 +54,23 @@ public class TournamentListController {
 
         try {
             App.OpenDialog("TournamentOverview", "Tournament Overview", 800, 600, selected);
+
+            tournamentList.setAll(db.getTournaments());
+            tournamentTable.refresh();
+
         } catch (Exception e) {
             e.printStackTrace();
         }
     }
 
     private static ArrayList<Game> allGames = db.getGames();
-    private static ArrayList<Participant> allParticipants = db.getParticipants();
 
     public void initialize() {
         setupTournamentTable();
+
+        view.disableProperty().bind(tournamentTable.getSelectionModel().selectedItemProperty().isNull());
     }
+
 
     public void setupTournamentTable() {
         title.setCellValueFactory(new PropertyValueFactory<>("tournamentTitle"));
@@ -79,7 +85,6 @@ public class TournamentListController {
                     break;
                 }
             }
-
             return new ReadOnlyStringWrapper(title);
         });
 
@@ -90,13 +95,13 @@ public class TournamentListController {
                 return new ReadOnlyStringWrapper("undecided");
             }
 
-            String name = "unknown";
+            Participant p = db.getParticipantByID(winnerId);
 
-            for (Participant p : allParticipants) {
-                if (p.getID() == winnerId) {
-                    name = p.getName();
-                    break;
-                }
+            String name;
+            if (p != null) {
+                name = p.getName();
+            } else {
+                name = "unknown";
             }
 
             return new ReadOnlyStringWrapper(name);

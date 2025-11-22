@@ -153,8 +153,12 @@ public class db {
     public static ArrayList<Participant> getParticipantsForTournament(int tournamentID) {
         ArrayList<Participant> list = new ArrayList<>();
 
-        String sql = "SELECT p.ID, p.Name, p.IsTemporary, p.IsTeam " + "FROM participantintournament tp " +          // NAME ANPASSEN FALLS NOETIG
-                "JOIN participant p ON p.ID = tp.ParticipantID " + "WHERE tp.TournamentID = ?";
+        String sql = """
+                SELECT p.ID, p.Name, p.IsTemporary, p.IsTeam
+                FROM participantintournament tp
+                JOIN participant p ON p.ID = tp.ParticipantID
+                WHERE tp.TournamentID = ?
+                """;
 
         try (Connection con = connect(); PreparedStatement ps = con.prepareStatement(sql)) {
 
@@ -252,6 +256,228 @@ public class db {
         try (PreparedStatement ps = connect().prepareStatement(sql)) {
 
             ps.setInt(1, participantID);
+
+            ps.executeUpdate();
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    public static ArrayList<Match> getMatchesForTournament(int tournamentId) {
+        ArrayList<Match> result = new ArrayList<>();
+        String sql = "SELECT * FROM `match` WHERE TournamentID = ? ORDER BY Stage, `Order`";
+
+        try (PreparedStatement ps = connect().prepareStatement(sql)) {
+            ps.setInt(1, tournamentId);
+            ResultSet rs = ps.executeQuery();
+
+            while (rs.next()) {
+                int id = rs.getInt("ID");
+                int tId = rs.getInt("TournamentID");
+                int p1 = rs.getInt("Participant1ID");
+                Integer p2 = rs.getObject("Participant2ID", Integer.class);
+                int stage = rs.getInt("Stage");
+                int order = rs.getInt("Order");
+                Integer winner = rs.getObject("WinnerParticipantID", Integer.class);
+
+                Match m = new Match(id, tId, p1, p2, stage, order, winner);
+                result.add(m);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        return result;
+    }
+
+    public static ArrayList<Match> getMatchesForStage(int tournamentId, int stage) {
+        ArrayList<Match> matches = new ArrayList<>();
+
+        String sql = """
+            SELECT ID,
+                   TournamentID,
+                   Participant1ID,
+                   Participant2ID,
+                   Stage,
+                   `Order`,
+                   WinnerParticipantID
+            FROM `match`
+            WHERE TournamentID = ?
+              AND Stage = ?
+            ORDER BY `Order`
+            """;
+
+        try (PreparedStatement ps = connect().prepareStatement(sql)) {
+            ps.setInt(1, tournamentId);
+            ps.setInt(2, stage);
+
+            try (ResultSet rs = ps.executeQuery()) {
+                while (rs.next()) {
+                    Match m = new Match(
+                            rs.getInt("ID"),
+                            rs.getInt("TournamentID"),
+                            rs.getInt("Participant1ID"),
+                            (Integer) rs.getObject("Participant2ID"),
+                            rs.getInt("Stage"),
+                            rs.getInt("Order"),
+                            (Integer) rs.getObject("WinnerParticipantID")
+                    );
+                    matches.add(m);
+                }
+            }
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        return matches;
+    }
+
+    public static int addMatch(Match m) {
+        String sql = """
+            INSERT INTO `match`
+            (TournamentID, Participant1ID, Participant2ID, Stage, `Order`, WinnerParticipantID)
+            VALUES (?, ?, ?, ?, ?, ?)
+            """;
+
+        try (PreparedStatement ps = connect().prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
+
+            ps.setInt(1, m.getTournamentID());
+            ps.setInt(2, m.getParticipant1ID());
+
+            if (m.getParticipant2ID() == null) {
+                ps.setNull(3, Types.INTEGER);
+            } else {
+                ps.setInt(3, m.getParticipant2ID());
+            }
+
+            ps.setInt(4, m.getStage());
+            ps.setInt(5, m.getOrder());
+
+            // hier auf null pruefen, nicht auf 0
+            if (m.getWinnerParticipantID() == null) {
+                ps.setNull(6, Types.INTEGER);
+            } else {
+                ps.setInt(6, m.getWinnerParticipantID());
+            }
+
+            ps.executeUpdate();
+
+            ResultSet keys = ps.getGeneratedKeys();
+            if (keys.next()) {
+                int id = keys.getInt(1);
+                m.setID(id);
+                return id;
+            }
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        return -1;
+    }
+
+    public static void updateMatchWinner(int matchId, int winnerId) {
+        String sql = "UPDATE `match` SET WinnerParticipantID = ? WHERE ID = ?";
+
+        try (PreparedStatement ps = connect().prepareStatement(sql)) {
+            ps.setInt(1, winnerId);
+            ps.setInt(2, matchId);
+            ps.executeUpdate();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    public static ArrayList<Integer> getWinnersForStage(int tournamentId, int stage) {
+        ArrayList<Integer> winners = new ArrayList<>();
+
+        String sql = """
+            SELECT WinnerParticipantID
+            FROM `match`
+            WHERE TournamentID = ?
+              AND Stage = ?
+              AND WinnerParticipantID IS NOT NULL
+            """;
+
+        try (PreparedStatement ps = connect().prepareStatement(sql)) {
+            ps.setInt(1, tournamentId);
+            ps.setInt(2, stage);
+
+            try (ResultSet rs = ps.executeQuery()) {
+                while (rs.next()) {
+                    winners.add(rs.getInt("WinnerParticipantID"));
+                }
+            }
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        return winners;
+    }
+
+    public static void updateTournamentState(int tournamentID, int state) {
+
+        String sql = "UPDATE tournament SET TournamentState = ? WHERE ID = ?";
+
+        try (PreparedStatement ps = connect().prepareStatement(sql)) {
+
+            ps.setInt(1, state);
+            ps.setInt(2, tournamentID);
+
+            ps.executeUpdate();
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    public static void updateTournamentWinner(int tournamentID, int winnerID) {
+
+        String sql = "UPDATE tournament SET WinnerParticipantID = ? WHERE ID = ?";
+
+        try (PreparedStatement ps = connect().prepareStatement(sql)) {
+
+            ps.setInt(1, winnerID);
+            ps.setInt(2, tournamentID);
+
+            ps.executeUpdate();
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    public static Participant getParticipantByID(int participantID) {
+        String sql = "SELECT * FROM participant WHERE ID = ?";
+        Participant p = null;
+        try (PreparedStatement ps = connect().prepareStatement(sql)) {
+            ps.setInt(1, participantID);
+            ResultSet rs = ps.executeQuery();
+            if (rs.next()) {
+                int id = rs.getInt("ID");
+                String name = rs.getString("Name");
+                boolean isTemporary = rs.getBoolean("IsTemporary");
+                boolean isTeam = rs.getBoolean("IsTeam");
+
+                p = new Participant(id, name, isTemporary, isTeam);
+            }
+        } catch (SQLException | ClassNotFoundException e) {
+            e.printStackTrace();
+        }
+        return p;
+    }
+
+    public static void updateTournamentWinnerAndState(int tournamentId, int winnerId, int state) {
+        String sql = "UPDATE tournament SET WinnerParticipantID = ?, TournamentState = ? WHERE ID = ?";
+
+        try (PreparedStatement ps = connect().prepareStatement(sql)) {
+
+            ps.setInt(1, winnerId);
+            ps.setInt(2, state);
+            ps.setInt(3, tournamentId);
 
             ps.executeUpdate();
 
