@@ -24,15 +24,6 @@ public class db {
         return connection;
     }
 
-    public void disconnect() {
-        try {
-            if (connection != null && !connection.isClosed()) {
-                connection.close();
-            }
-        } catch (SQLException ignored) {
-        }
-    }
-
     public static ArrayList<Tournament> getTournaments() {
         ArrayList<Tournament> tournaments = new ArrayList<>();
         String sql = "SELECT * FROM tournament";
@@ -295,18 +286,18 @@ public class db {
         ArrayList<Match> matches = new ArrayList<>();
 
         String sql = """
-            SELECT ID,
-                   TournamentID,
-                   Participant1ID,
-                   Participant2ID,
-                   Stage,
-                   `Order`,
-                   WinnerParticipantID
-            FROM `match`
-            WHERE TournamentID = ?
-              AND Stage = ?
-            ORDER BY `Order`
-            """;
+                SELECT ID,
+                       TournamentID,
+                       Participant1ID,
+                       Participant2ID,
+                       Stage,
+                       `Order`,
+                       WinnerParticipantID
+                FROM `match`
+                WHERE TournamentID = ?
+                  AND Stage = ?
+                ORDER BY `Order`
+                """;
 
         try (PreparedStatement ps = connect().prepareStatement(sql)) {
             ps.setInt(1, tournamentId);
@@ -314,15 +305,7 @@ public class db {
 
             try (ResultSet rs = ps.executeQuery()) {
                 while (rs.next()) {
-                    Match m = new Match(
-                            rs.getInt("ID"),
-                            rs.getInt("TournamentID"),
-                            rs.getInt("Participant1ID"),
-                            (Integer) rs.getObject("Participant2ID"),
-                            rs.getInt("Stage"),
-                            rs.getInt("Order"),
-                            (Integer) rs.getObject("WinnerParticipantID")
-                    );
+                    Match m = new Match(rs.getInt("ID"), rs.getInt("TournamentID"), rs.getInt("Participant1ID"), (Integer) rs.getObject("Participant2ID"), rs.getInt("Stage"), rs.getInt("Order"), (Integer) rs.getObject("WinnerParticipantID"));
                     matches.add(m);
                 }
             }
@@ -336,10 +319,10 @@ public class db {
 
     public static int addMatch(Match m) {
         String sql = """
-            INSERT INTO `match`
-            (TournamentID, Participant1ID, Participant2ID, Stage, `Order`, WinnerParticipantID)
-            VALUES (?, ?, ?, ?, ?, ?)
-            """;
+                INSERT INTO `match`
+                (TournamentID, Participant1ID, Participant2ID, Stage, `Order`, WinnerParticipantID)
+                VALUES (?, ?, ?, ?, ?, ?)
+                """;
 
         try (PreparedStatement ps = connect().prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
 
@@ -355,7 +338,6 @@ public class db {
             ps.setInt(4, m.getStage());
             ps.setInt(5, m.getOrder());
 
-            // hier auf null pruefen, nicht auf 0
             if (m.getWinnerParticipantID() == null) {
                 ps.setNull(6, Types.INTEGER);
             } else {
@@ -394,12 +376,12 @@ public class db {
         ArrayList<Integer> winners = new ArrayList<>();
 
         String sql = """
-            SELECT WinnerParticipantID
-            FROM `match`
-            WHERE TournamentID = ?
-              AND Stage = ?
-              AND WinnerParticipantID IS NOT NULL
-            """;
+                SELECT WinnerParticipantID
+                FROM `match`
+                WHERE TournamentID = ?
+                  AND Stage = ?
+                  AND WinnerParticipantID IS NOT NULL
+                """;
 
         try (PreparedStatement ps = connect().prepareStatement(sql)) {
             ps.setInt(1, tournamentId);

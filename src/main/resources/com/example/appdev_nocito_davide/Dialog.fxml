@@ -15,56 +15,64 @@
 <?import javafx.scene.text.Font?>
 
 
-<AnchorPane prefHeight="400.0" prefWidth="500.0" xmlns="http://javafx.com/javafx/25" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.appdev_nocito_davide.DialogController">
-   <children>
-      <VBox fx:id="rootPane" layoutX="-1.0" layoutY="-1.0" AnchorPane.bottomAnchor="20.0" AnchorPane.leftAnchor="20.0" AnchorPane.rightAnchor="20.0" AnchorPane.topAnchor="20.0">
-         <children>
-            <Label fx:id="headerLabel" prefHeight="48.0" prefWidth="494.0" />
-            <GridPane fx:id="formGrid" prefHeight="231.0" prefWidth="500.0">
-              <columnConstraints>
-                <ColumnConstraints hgrow="NEVER" minWidth="-Infinity" percentWidth="30.0" />
-                <ColumnConstraints hgrow="ALWAYS" minWidth="100.0" />
-              </columnConstraints>
-              <rowConstraints>
-                <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-              </rowConstraints>
-               <children>
-                  <Label text="Title" GridPane.hgrow="NEVER" />
-                  <Label text="Game" GridPane.hgrow="NEVER" GridPane.rowIndex="1" />
-                  <Label text="Size" GridPane.hgrow="NEVER" GridPane.rowIndex="2" />
-                  <ComboBox fx:id="gameBox" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" GridPane.columnIndex="1" GridPane.hgrow="ALWAYS" GridPane.rowIndex="1">
-                     <GridPane.margin>
-                        <Insets left="30.0" />
-                     </GridPane.margin>
-                  </ComboBox>
-                  <Spinner fx:id="sizeField" minHeight="-Infinity" minWidth="-Infinity" GridPane.columnIndex="1" GridPane.hgrow="ALWAYS" GridPane.rowIndex="2">
-                     <opaqueInsets>
-                        <Insets />
-                     </opaqueInsets>
-                     <GridPane.margin>
-                        <Insets left="30.0" />
-                     </GridPane.margin>
-                  </Spinner>
-                  <TextField fx:id="titleField" minHeight="-Infinity" minWidth="-Infinity" GridPane.columnIndex="1" GridPane.hgrow="ALWAYS">
-                     <GridPane.margin>
-                        <Insets left="30.0" />
-                     </GridPane.margin>
-                  </TextField>
-               </children>
-            </GridPane>
-            <Label fx:id="errorLabel" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="17.0" textFill="RED" VBox.vgrow="ALWAYS">
-               <font>
-                  <Font name="System Bold" size="12.0" />
-               </font>
-            </Label>
-            <HBox alignment="CENTER_RIGHT" prefHeight="48.0" prefWidth="101.0" spacing="10.0">
-               <children>
-                  <Button fx:id="submitButton" mnemonicParsing="false" prefHeight="48.0" prefWidth="108.0" text="Create" onAction="#onSaveTournament"/>
-               </children>
-            </HBox>
-         </children>
-      </VBox>
-   </children>
+<AnchorPane prefHeight="400.0" prefWidth="500.0" xmlns="http://javafx.com/javafx/25" xmlns:fx="http://javafx.com/fxml/1"
+            fx:controller="com.example.appdev_nocito_davide.DialogController">
+    <children>
+        <VBox fx:id="rootPane" layoutX="-1.0" layoutY="-1.0" AnchorPane.bottomAnchor="20.0" AnchorPane.leftAnchor="20.0"
+              AnchorPane.rightAnchor="20.0" AnchorPane.topAnchor="20.0">
+            <children>
+                <Label fx:id="headerLabel" prefHeight="48.0" prefWidth="494.0"/>
+                <GridPane fx:id="formGrid" prefHeight="231.0" prefWidth="500.0">
+                    <columnConstraints>
+                        <ColumnConstraints hgrow="NEVER" minWidth="-Infinity" percentWidth="30.0"/>
+                        <ColumnConstraints hgrow="ALWAYS" minWidth="100.0"/>
+                    </columnConstraints>
+                    <rowConstraints>
+                        <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES"/>
+                        <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES"/>
+                        <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES"/>
+                    </rowConstraints>
+                    <children>
+                        <Label text="Title" GridPane.hgrow="NEVER"/>
+                        <Label text="Game" GridPane.hgrow="NEVER" GridPane.rowIndex="1"/>
+                        <Label text="Size" GridPane.hgrow="NEVER" GridPane.rowIndex="2"/>
+                        <ComboBox fx:id="gameBox" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity"
+                                  minWidth="-Infinity" GridPane.columnIndex="1" GridPane.hgrow="ALWAYS"
+                                  GridPane.rowIndex="1">
+                            <GridPane.margin>
+                                <Insets left="30.0"/>
+                            </GridPane.margin>
+                        </ComboBox>
+                        <Spinner fx:id="sizeField" minHeight="-Infinity" minWidth="-Infinity" GridPane.columnIndex="1"
+                                 GridPane.hgrow="ALWAYS" GridPane.rowIndex="2">
+                            <opaqueInsets>
+                                <Insets/>
+                            </opaqueInsets>
+                            <GridPane.margin>
+                                <Insets left="30.0"/>
+                            </GridPane.margin>
+                        </Spinner>
+                        <TextField fx:id="titleField" minHeight="-Infinity" minWidth="-Infinity"
+                                   GridPane.columnIndex="1" GridPane.hgrow="ALWAYS">
+                            <GridPane.margin>
+                                <Insets left="30.0"/>
+                            </GridPane.margin>
+                        </TextField>
+                    </children>
+                </GridPane>
+                <Label fx:id="errorLabel" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity"
+                       minWidth="-Infinity" prefHeight="17.0" textFill="RED" VBox.vgrow="ALWAYS">
+                    <font>
+                        <Font name="System Bold" size="12.0"/>
+                    </font>
+                </Label>
+                <HBox alignment="CENTER_RIGHT" prefHeight="48.0" prefWidth="101.0" spacing="10.0">
+                    <children>
+                        <Button fx:id="submitButton" mnemonicParsing="false" prefHeight="48.0" prefWidth="108.0"
+                                text="Create" onAction="#onSaveTournament"/>
+                    </children>
+                </HBox>
+            </children>
+        </VBox>
+    </children>
 </AnchorPane>

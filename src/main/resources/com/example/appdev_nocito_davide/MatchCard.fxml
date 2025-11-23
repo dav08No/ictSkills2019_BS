@@ -11,22 +11,17 @@
     <padding>
         <Insets top="6" right="6" bottom="6" left="6"/>
     </padding>
-
     <top>
         <Label fx:id="matchTitleLabel"
                text="Match 1.1"
                style="-fx-font-size: 14px; -fx-font-weight: bold;"
                BorderPane.alignment="CENTER_LEFT"/>
     </top>
-
     <center>
         <VBox spacing="4">
             <BorderPane style="-fx-border-color: #777777; -fx-border-width: 1; -fx-padding: 8;">
-                <!-- Linke Seite -->
                 <left>
                     <VBox spacing="4" BorderPane.alignment="CENTER_LEFT">
-
-                        <!-- Buttons ueber dem Namen -->
                         <HBox spacing="4">
                             <Button fx:id="leftWButton"
                                     text="W"
@@ -37,8 +32,6 @@
                                     onAction="#onLeftL"
                                     style="-fx-background-color: #F44336; -fx-text-fill: white; -fx-font-weight: bold;"/>
                         </HBox>
-
-                        <!-- Label wenn entschieden -->
                         <HBox spacing="4">
                             <Label fx:id="leftResultLabel"
                                    text=""
@@ -46,24 +39,17 @@
                                    managed="false"
                                    style="-fx-font-weight: bold; -fx-text-fill: #000000;"/>
                         </HBox>
-
                         <Label fx:id="leftNameLabel" text="Left"
                                style="-fx-font-size: 12px;"/>
-
                     </VBox>
                 </left>
-
-                <!-- Mitte VS -->
                 <center>
                     <Label text="VS"
                            style="-fx-font-size: 16px; -fx-font-weight: bold;"
                            BorderPane.alignment="CENTER"/>
                 </center>
-
-                <!-- Rechte Seite -->
                 <right>
                     <VBox spacing="4" BorderPane.alignment="CENTER_RIGHT">
-
                         <HBox spacing="4">
                             <Button fx:id="rightWButton"
                                     text="W"
@@ -74,7 +60,6 @@
                                     onAction="#onRightL"
                                     style="-fx-background-color: #F44336; -fx-text-fill: white; -fx-font-weight: bold;"/>
                         </HBox>
-
                         <HBox spacing="4">
                             <Label fx:id="rightResultLabel"
                                    text=""
@@ -82,15 +67,11 @@
                                    managed="false"
                                    style="-fx-font-weight: bold; -fx-text-fill: #000000;"/>
                         </HBox>
-
                         <Label fx:id="rightNameLabel" text="Right"
                                style="-fx-font-size: 12px;"/>
-
                     </VBox>
                 </right>
             </BorderPane>
-
-            <!-- Kommentarzeile -->
             <HBox spacing="4">
                 <Label text="Comment"/>
                 <TextField fx:id="commentField" HBox.hgrow="ALWAYS"/>

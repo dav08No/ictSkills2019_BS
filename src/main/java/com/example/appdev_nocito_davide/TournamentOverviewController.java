@@ -1,9 +1,7 @@
 package com.example.appdev_nocito_davide;
 
 import javafx.beans.binding.Bindings;
-import javafx.beans.binding.BooleanBinding;
 import javafx.beans.property.BooleanProperty;
-import javafx.beans.property.ReadOnlyStringWrapper;
 import javafx.beans.property.SimpleBooleanProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -17,10 +15,14 @@ import javafx.scene.control.TabPane;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.VBox;
+import javafx.stage.FileChooser;
 
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.Set;
+import java.util.Comparator;
 
 public class TournamentOverviewController implements iReceiveData {
 
@@ -82,8 +84,6 @@ public class TournamentOverviewController implements iReceiveData {
     private final ArrayList<Game> allGames = db.getGames();
     private final ObservableList<Participant> allParticipants = FXCollections.observableArrayList();
 
-
-    // Flag: wurde das Turnier bereits gestartet
     private final BooleanProperty tournamentStarted = new SimpleBooleanProperty(false);
 
     private int nextNumber = 1;
@@ -118,7 +118,7 @@ public class TournamentOverviewController implements iReceiveData {
     void onAddParticipant(ActionEvent event) {
         try {
             App.OpenDialog("ParticipantDialog", "Participant", 250, 350, new Object[]{currentTournament, null});
-            loadParticipants(); // ruft selber updateButtonStates()
+            loadParticipants();
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -176,7 +176,71 @@ public class TournamentOverviewController implements iReceiveData {
 
     @FXML
     void onExportData(ActionEvent event) {
-        // optional
+        if (currentTournament == null) {
+            return;
+        }
+
+        ArrayList<Match> matches = db.getMatchesForTournament(currentTournament.getTournamentID());
+        if (matches.isEmpty()) {
+            Alert alert = new Alert(Alert.AlertType.INFORMATION);
+            alert.setTitle("Export Data");
+            alert.setHeaderText(null);
+            alert.setContentText("There are no matches to export for this tournament.");
+            alert.showAndWait();
+            return;
+        }
+
+        matches.sort(Comparator.comparingInt(Match::getStage).thenComparingInt(Match::getOrder));
+
+        String rawTitle = currentTournament.getTournamentTitle();
+        if (rawTitle == null || rawTitle.isBlank()) {
+            rawTitle = "Tournament";
+        }
+        String safeTitle = rawTitle.replaceAll("[\\\\/:*?\"<>|]", "").trim();
+        if (safeTitle.isEmpty()) {
+            safeTitle = "Tournament";
+        }
+
+        String date = java.time.LocalDate.now().format(java.time.format.DateTimeFormatter.ofPattern("yyyyMMdd"));
+        String defaultFileName = safeTitle + "-" + date + ".csv";
+
+        FileChooser chooser = new FileChooser();
+        chooser.setTitle("Export Tournament Data");
+        chooser.setInitialFileName(defaultFileName);
+        chooser.getExtensionFilters().add(new FileChooser.ExtensionFilter("CSV Files", "*.csv"));
+
+        File file = chooser.showSaveDialog(tabPane.getScene().getWindow());
+        if (file == null) {
+            return;
+        }
+
+        try (BufferedWriter writer = new BufferedWriter(new FileWriter(file, false))) {
+
+            writer.write("Stage,Order,Winner,Loser");
+            writer.newLine();
+
+            for (Match m : matches) {
+                String[] WinnerAndLoserNames = getWinnerAndLoserNames(m);
+                String winnerName = WinnerAndLoserNames[0];
+                String loserName = WinnerAndLoserNames[1];
+
+                String winnerEscaped = "\"" + winnerName.replace("\"", "\"\"") + "\"";
+                String loserEscaped = "\"" + loserName.replace("\"", "\"\"") + "\"";
+
+                String line = m.getStage() + "," + m.getOrder() + "," + winnerEscaped + "," + loserEscaped;
+
+                writer.write(line);
+                writer.newLine();
+            }
+
+        } catch (IOException e) {
+            e.printStackTrace();
+            Alert alert = new Alert(Alert.AlertType.ERROR);
+            alert.setTitle("Export failed");
+            alert.setHeaderText(null);
+            alert.setContentText("Could not save CSV file:\n" + e.getMessage());
+            alert.showAndWait();
+        }
     }
 
     @FXML
@@ -294,7 +358,7 @@ public class TournamentOverviewController implements iReceiveData {
             stageTitle.setStyle("-fx-font-size: 20px; -fx-font-weight: bold;");
 
             int matchCount = stageMatches.size();
-            Set<Integer> participantIds = new HashSet<>();
+            ArrayList<Integer> participantIds = new ArrayList<>();
             for (Match m : stageMatches) {
                 participantIds.add(m.getParticipant1ID());
                 if (m.getParticipant2ID() != null) {
@@ -315,7 +379,7 @@ public class TournamentOverviewController implements iReceiveData {
             }
 
             ScrollPane scroll = new ScrollPane(matchesBox);
-            scroll.setFitToWidth(true); // passt die Karten an die Breite an
+            scroll.setFitToWidth(true);
             scroll.setVbarPolicy(ScrollPane.ScrollBarPolicy.AS_NEEDED);
             scroll.setHbarPolicy(ScrollPane.ScrollBarPolicy.NEVER);
 
@@ -340,15 +404,7 @@ public class TournamentOverviewController implements iReceiveData {
             String leftName = getParticipantNameById(m.getParticipant1ID());
             String rightName = getParticipantNameById(m.getParticipant2ID());
 
-            controller.setup(
-                    this,
-                    m,
-                    title,
-                    m.getParticipant1ID(),
-                    leftName,
-                    m.getParticipant2ID(),
-                    rightName
-            );
+            controller.setup(this, m, title, m.getParticipant1ID(), leftName, m.getParticipant2ID(), rightName);
 
             return root;
         } catch (Exception e) {
@@ -368,22 +424,16 @@ public class TournamentOverviewController implements iReceiveData {
     }
 
     private void checkStageFinished(Integer stageNumber) {
-        // alle Matches dieser Stage laden
-        ArrayList<Match> stageMatches =
-                db.getMatchesForStage(currentTournament.getTournamentID(), stageNumber);
+        ArrayList<Match> stageMatches = db.getMatchesForStage(currentTournament.getTournamentID(), stageNumber);
 
-        // wenn noch mindestens ein Match undecided ist, abbrechen
         for (Match m : stageMatches) {
             if (m.getWinnerParticipantID() == null) {
                 return;
             }
         }
 
-        // Gewinner dieser Stage holen (schon mit DISTINCT in db)
-        ArrayList<Integer> winnerIds =
-                db.getWinnersForStage(currentTournament.getTournamentID(), stageNumber);
+        ArrayList<Integer> winnerIds = db.getWinnersForStage(currentTournament.getTournamentID(), stageNumber);
 
-        // Nur ein Gewinner = Turnier fertig
         if (winnerIds.size() == 1) {
             Integer winnerId = winnerIds.get(0);
             db.updateTournamentWinnerAndState(currentTournament.getTournamentID(), winnerId, 2);
@@ -399,21 +449,16 @@ public class TournamentOverviewController implements iReceiveData {
             return;
         }
 
-        // Mehr als 1 Gewinner = neue Stage
         if (winnerIds.size() > 1) {
             int nextStage = stageNumber + 1;
 
-            // NEU: prüfen ob es diese Stage schon gibt
-            ArrayList<Match> nextStageMatches =
-                    db.getMatchesForStage(currentTournament.getTournamentID(), nextStage);
+            ArrayList<Match> nextStageMatches = db.getMatchesForStage(currentTournament.getTournamentID(), nextStage);
 
             if (!nextStageMatches.isEmpty()) {
-                // Stage existiert bereits, nur UI neu zeichnen
                 loadStages();
                 return;
             }
 
-            // Stage noch nicht vorhanden, also anlegen
             createStage(nextStage);
             loadStages();
         }
@@ -443,6 +488,40 @@ public class TournamentOverviewController implements iReceiveData {
         tournamentSize.setText(String.valueOf(currentTournament.getSize()));
 
         updateButtonStates();
+    }
+
+    private String[] getWinnerAndLoserNames(Match m) {
+        Integer winnerId = m.getWinnerParticipantID();
+        Integer p1 = m.getParticipant1ID();
+        Integer p2 = m.getParticipant2ID();
+
+        String winnerName;
+        String loserName;
+
+        if (winnerId == null || winnerId == 0) {
+            winnerName = "-";
+            loserName = "-";
+            return new String[]{winnerName, loserName};
+        }
+
+        winnerName = getParticipantNameById(winnerId);
+
+        if (p2 == null) {
+            loserName = "-";
+            return new String[]{winnerName, loserName};
+        }
+
+        Integer loserId;
+        if (winnerId.equals(p1)) {
+            loserId = p2;
+        } else if (winnerId.equals(p2)) {
+            loserId = p1;
+        } else {
+            loserId = null;
+        }
+
+        loserName = (loserId == null) ? "-" : getParticipantNameById(loserId);
+        return new String[]{winnerName, loserName};
     }
 
     @Override

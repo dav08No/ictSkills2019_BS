@@ -43,15 +43,7 @@ public class MatchCardController {
     private Integer leftId;
     private Integer rightId;
 
-    public void setup(
-            TournamentOverviewController parent,
-            Match match,
-            String title,
-            Integer leftId,
-            String leftName,
-            Integer rightId,
-            String rightName
-    ) {
+    public void setup(TournamentOverviewController parent, Match match, String title, Integer leftId, String leftName, Integer rightId, String rightName) {
         this.parent = parent;
         this.match = match;
         this.leftId = leftId;
@@ -62,7 +54,6 @@ public class MatchCardController {
         leftNameLabel.setText(leftName != null ? leftName : "-");
         rightNameLabel.setText(rightName != null ? rightName : "-");
 
-        // free win: kein rechter Spieler
         if (rightId == null) {
             rightWButton.setDisable(true);
             rightLButton.setDisable(true);
@@ -76,7 +67,6 @@ public class MatchCardController {
 
         boolean decided = winnerId != null;
 
-        // Buttons nur sichtbar wenn noch nicht entschieden
         leftWButton.setVisible(!decided);
         leftLButton.setVisible(!decided);
         rightWButton.setVisible(!decided && rightId != null);
@@ -87,7 +77,6 @@ public class MatchCardController {
         rightWButton.setManaged(!decided && rightId != null);
         rightLButton.setManaged(!decided && rightId != null);
 
-        // Labels nur sichtbar wenn entschieden
         leftResultLabel.setVisible(decided);
         leftResultLabel.setManaged(decided);
         rightResultLabel.setVisible(decided);
@@ -100,7 +89,6 @@ public class MatchCardController {
             return;
         }
 
-        // entschieden → W und L setzen
         if (winnerId.equals(leftId)) {
             leftResultLabel.setText("W");
             leftResultLabel.setStyle("-fx-text-fill: #4CAF50; -fx-font-weight: bold;");
@@ -112,15 +100,12 @@ public class MatchCardController {
             rightResultLabel.setText("W");
             rightResultLabel.setStyle("-fx-text-fill: #4CAF50; -fx-font-weight: bold;");
         } else {
-            // Sicherheit, falls etwas schiefgelaufen ist
             leftResultLabel.setText("");
             rightResultLabel.setText("");
         }
 
-        commentField.setDisable(false); // kannst du auch auf true setzen, wenn Kommentar nachher gesperrt sein soll
+        commentField.setDisable(false);
     }
-
-    // Button Handler
 
     @FXML
     private void onLeftW() {

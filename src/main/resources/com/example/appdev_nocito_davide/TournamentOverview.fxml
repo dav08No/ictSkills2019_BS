@@ -88,12 +88,12 @@
                                 <center>
                                     <TableView fx:id="participantsList" BorderPane.alignment="CENTER">
                                         <columnResizePolicy>
-                                            <TableView fx:constant="CONSTRAINED_RESIZE_POLICY" />
+                                            <TableView fx:constant="CONSTRAINED_RESIZE_POLICY"/>
                                         </columnResizePolicy>
 
                                         <columns>
                                             <TableColumn fx:id="participantNameColumn"
-                                                         text="Name" />
+                                                         text="Name"/>
                                         </columns>
                                     </TableView>
                                 </center>

@@ -10,7 +10,6 @@ import javafx.scene.control.TableView;
 import javafx.scene.control.cell.PropertyValueFactory;
 
 import java.util.ArrayList;
-import java.util.List;
 
 public class TournamentListController {
 
@@ -63,7 +62,7 @@ public class TournamentListController {
         }
     }
 
-    private static ArrayList<Game> allGames = db.getGames();
+    private final ArrayList<Game> allGames = db.getGames();
 
     public void initialize() {
         setupTournamentTable();
