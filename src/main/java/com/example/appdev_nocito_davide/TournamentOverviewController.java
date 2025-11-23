@@ -409,7 +409,11 @@ public class TournamentOverviewController implements iReceiveData {
             return root;
         } catch (Exception e) {
             e.printStackTrace();
-            return new Label("Error loading match");
+            Node label = new Label("Error loading match");
+            label.setStyle("-fx-font-size: 20px;");
+            label.setStyle("-fx-font-weight: bold;");
+            label.setStyle("-fx-text-fill: red;");
+            return label;
         }
     }
 
