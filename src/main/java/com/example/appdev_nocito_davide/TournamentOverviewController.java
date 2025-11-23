@@ -24,7 +24,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Comparator;
 
-public class TournamentOverviewController implements iReceiveData {
+public class TournamentOverviewController implements DataReceiver {
 
     @FXML
     private Button EditButton;

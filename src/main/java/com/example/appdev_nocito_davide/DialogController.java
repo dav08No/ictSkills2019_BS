@@ -9,7 +9,7 @@ import javafx.scene.layout.VBox;
 
 import java.util.ArrayList;
 
-public class DialogController implements iReceiveData {
+public class DialogController implements DataReceiver {
 
     @FXML
     private Label errorLabel;

@@ -36,7 +36,6 @@ public class db {
                 int Size = rs.getInt("Size");
                 int WinnerParticipantID = rs.getInt("WinnerParticipantID");
                 int TournamentState = rs.getInt("TournamentState");
-                System.out.println("ID: " + ID + "; Title" + Title);
                 tournaments.add(new Tournament(ID, Title, GameID, Size, WinnerParticipantID, TournamentState));
             }
         } catch (SQLException | ClassNotFoundException e) {
