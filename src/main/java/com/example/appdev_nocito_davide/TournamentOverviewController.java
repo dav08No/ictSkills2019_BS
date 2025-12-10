@@ -17,10 +17,8 @@ import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.VBox;
 import javafx.stage.FileChooser;
 
-import java.io.BufferedWriter;
-import java.io.File;
-import java.io.FileWriter;
-import java.io.IOException;
+import java.io.*;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Comparator;
 
@@ -214,25 +212,27 @@ public class TournamentOverviewController implements DataReceiver {
             return;
         }
 
-        try (BufferedWriter writer = new BufferedWriter(new FileWriter(file, false))) {
+        final String SEP = ";";
 
-            writer.write("Stage,Order,Winner,Loser");
-            writer.newLine();
+        try (Writer writer = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(file, false), StandardCharsets.UTF_8))) {
+
+            writer.write('\ufeff');
+            writer.write("Stage" + SEP + "Order" + SEP + "Winner" + SEP + "Loser");
+            writer.write(System.lineSeparator());
 
             for (Match m : matches) {
-                String[] WinnerAndLoserNames = getWinnerAndLoserNames(m);
-                String winnerName = WinnerAndLoserNames[0];
-                String loserName = WinnerAndLoserNames[1];
+                String[] winnerAndLoserNames = getWinnerAndLoserNames(m);
+                String winnerName = winnerAndLoserNames[0];
+                String loserName = winnerAndLoserNames[1];
 
                 String winnerEscaped = "\"" + winnerName.replace("\"", "\"\"") + "\"";
                 String loserEscaped = "\"" + loserName.replace("\"", "\"\"") + "\"";
 
-                String line = m.getStage() + "," + m.getOrder() + "," + winnerEscaped + "," + loserEscaped;
+                String line = m.getStage() + SEP + m.getOrder() + SEP + winnerEscaped + SEP + loserEscaped;
 
                 writer.write(line);
-                writer.newLine();
+                writer.write(System.lineSeparator());
             }
-
         } catch (IOException e) {
             e.printStackTrace();
             Alert alert = new Alert(Alert.AlertType.ERROR);
