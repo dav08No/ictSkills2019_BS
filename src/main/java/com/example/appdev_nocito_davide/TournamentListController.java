@@ -35,7 +35,7 @@ public class TournamentListController {
     @FXML
     void onAddTournament() {
         try {
-            App.OpenDialog("Dialog", "Create Tournament", 500, 400, null);
+            App.OpenDialog("Dialog", "Create Tournament", 250, 400, null);
 
             tournamentList.setAll(db.getTournaments());
 

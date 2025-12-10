@@ -26,7 +26,7 @@ public class App extends Application {
         stage.setTitle(title);
         FXMLLoader fxmlLoader = new FXMLLoader(App.class.getResource(fxml + ".fxml"));
         Parent root = fxmlLoader.load();
-        iReceiveData controller = fxmlLoader.getController();
+        DataReceiver controller = fxmlLoader.getController();
         controller.receiveData(data);
         stage.setScene(new Scene(root, width, height));
         stage.showAndWait();
