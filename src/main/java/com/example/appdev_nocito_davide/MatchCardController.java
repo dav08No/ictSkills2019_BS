@@ -34,9 +34,6 @@ public class MatchCardController {
     @FXML
     private Label rightResultLabel;
 
-    @FXML
-    private TextField commentField;
-
     private TournamentOverviewController parent;
     private Match match;
 
@@ -85,7 +82,6 @@ public class MatchCardController {
         if (!decided) {
             leftResultLabel.setText("");
             rightResultLabel.setText("");
-            commentField.setDisable(false);
             return;
         }
 
@@ -104,7 +100,6 @@ public class MatchCardController {
             rightResultLabel.setText("");
         }
 
-        commentField.setDisable(false);
     }
 
     @FXML

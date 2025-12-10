@@ -408,7 +408,6 @@ public class TournamentOverviewController implements DataReceiver {
 
             return root;
         } catch (Exception e) {
-            e.printStackTrace();
             Node label = new Label("Error loading match");
             label.setStyle("-fx-font-size: 20px;");
             label.setStyle("-fx-font-weight: bold;");

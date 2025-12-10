@@ -72,10 +72,6 @@
                     </VBox>
                 </right>
             </BorderPane>
-            <HBox spacing="4">
-                <Label text="Comment"/>
-                <TextField fx:id="commentField" HBox.hgrow="ALWAYS"/>
-            </HBox>
         </VBox>
     </center>
 </BorderPane>
